@@ -8,7 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CarGameScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SceneSelector.unity
     guid: f2dd2f31f6e1d4fca95b27799f13e562
+  - enabled: 1
+    path: Assets/SceneSelector/SceneSelector.unity
+    guid: 485051d368b5f4e6b9375157ee18deba
   m_configObjects: {}
