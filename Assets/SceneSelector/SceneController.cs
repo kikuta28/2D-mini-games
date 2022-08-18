@@ -9,6 +9,14 @@ public class SceneController : MonoBehaviour
     {
         SceneManager.LoadScene("CarGameScene");
     }
+    public void LoadPuzzleGameScene()
+    {
+        SceneManager.LoadScene("PuzzleGameScene");
+    }
+    public void LoadFluppyDogScene()
+    {
+        SceneManager.LoadScene("FluppyDogScene");
+    }
     public void LoadSceneSelectorScene()
     {
         SceneManager.LoadScene("SceneSelector");
