@@ -6,12 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/CarGameScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 0
-    path: Assets/Scenes/SceneSelector.unity
-    guid: f2dd2f31f6e1d4fca95b27799f13e562
-  - enabled: 1
     path: Assets/SceneSelector/SceneSelector.unity
     guid: 485051d368b5f4e6b9375157ee18deba
+  - enabled: 1
+    path: Assets/Scenes/CarGameScene.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/FluppyDogScene.unity
+    guid: d4c1f195ef3114451af528c283213668
+  - enabled: 1
+    path: Assets/Scenes/PuzzleGameScene.unity
+    guid: b5a8cb1e5f7254dfca336817b64f5f87
   m_configObjects: {}
