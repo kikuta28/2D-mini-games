@@ -2,35 +2,46 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Linq;
 
 public class PuzzleGameDirector : MonoBehaviour
 {
     // タイル関連
     List<GameObject> tiles;
     List<Vector2> startPositions;
+    List<Vector2> tileHistory;
     public int shuffleCount = 2;
+    public Text answerText;
+    public GameObject NextAnswerPosition;
+
 
     // クリアフラグ
     bool isClear;
-    GameObject txtInfo;
+    bool isShownAnswer = false;
+    GameObject textInfo;
 
     // Start is called before the first frame update
     void Start()
     {
-        txtInfo = GameObject.Find("Text");
-        txtInfo.SetActive(false);
+        answerText.text = "";
+        NextAnswerPosition.SetActive(false);
+
+        textInfo = GameObject.Find("Text");
+        textInfo.SetActive(false);
 
         // タイル関連
         tiles = new List<GameObject>();
         startPositions = new List<Vector2>();
+        tileHistory = new List<Vector2>();
 
         for (int i = 0; i < 16; i++)
         {
-            GameObject obj = GameObject.Find("" + i);
-            tiles.Add(obj);
+            GameObject gameObject = GameObject.Find("" + i);
+            tiles.Add(gameObject);
 
             // 正解のポジション（初期状態）
-            startPositions.Add(obj.transform.position);
+            startPositions.Add(gameObject.transform.position);
         }
 
         // シャッフルの処理
@@ -39,23 +50,25 @@ public class PuzzleGameDirector : MonoBehaviour
             // 動かせるオブジェクト
             List<GameObject> moves = new List<GameObject>();
 
+
             // 全部のオブジェクト
-            foreach (GameObject obj in tiles)
+            foreach (GameObject gameObject in tiles)
             {
                 // 0に隣接しているオブジェクト
-                if (null != getExTile(obj))
+                if (null != getReplaceableTile(gameObject))
                 {
-                    moves.Add(obj);
+                    moves.Add(gameObject);
                 }
             }
 
             if (0 < moves.Count)
             {
                 // ランダムで1つ動かす
-                int rnd = Random.Range(0, moves.Count);
-                GameObject tile0 = getExTile(moves[rnd]);
+                int random = Random.Range(0, moves.Count);
+                GameObject tile0 = getReplaceableTile(moves[random]);
 
-                changeTile(moves[rnd], tile0);
+                changeTile(moves[random], tile0);
+
             }
         }
 
@@ -70,8 +83,8 @@ public class PuzzleGameDirector : MonoBehaviour
         isClear = true;
         for (int i = 0; i < tiles.Count; i++)
         {
-            Vector2 pos = tiles[i].transform.position;
-            if (startPositions[i] != pos)
+            Vector2 position = tiles[i].transform.position;
+            if (startPositions[i] != position)
             {
                 isClear = false;
             }
@@ -79,7 +92,7 @@ public class PuzzleGameDirector : MonoBehaviour
 
         if (isClear)
         {
-            txtInfo.SetActive(true);
+            textInfo.SetActive(true);
 
             // 弾ける処理
             for (int i = 0; i < tiles.Count; i++)
@@ -98,45 +111,51 @@ public class PuzzleGameDirector : MonoBehaviour
 
             if (hit.collider)
             {
-                GameObject hitobj = hit.collider.gameObject;
-                GameObject target = getExTile(hitobj);
+                GameObject hitObject = hit.collider.gameObject;
+                GameObject target = getReplaceableTile(hitObject);
 
-                changeTile(hitobj, target);
+                changeTile(hitObject, target);
             }
         }
     }
 
     // 入替可能なタイルを見つけた場合、それを返す
-    GameObject getExTile(GameObject tile)
+    GameObject getReplaceableTile(GameObject tile)
     {
-        GameObject ret = null;
+        GameObject result = null;
 
-        Vector2 posa = tile.transform.position;
+        Vector2 positionA = tile.transform.position;
 
-        foreach (GameObject obj in tiles)
+        foreach (GameObject gameObject in tiles)
         {
-            Vector2 posb = obj.transform.position;
+            Vector2 positionB = gameObject.transform.position;
 
-            float dist = Vector2.Distance(posa, posb);
+            float dist = Vector2.Distance(positionA, positionB);
 
-            if (1 == dist && obj.name.Equals("0"))
+            if (1 == dist && gameObject.name.Equals("0"))
             {
-                ret = obj;
+                result = gameObject;
             }
         }
 
-        return ret;
+        return result;
     }
 
     // 場所を入れ替える
-    void changeTile(GameObject tilea, GameObject tileb)
+    void changeTile(GameObject tileA, GameObject tileB)
     {
-        if (null == tilea || null == tileb) return;
+        if (null == tileA || null == tileB) return;
 
         // ポジション更新
-        Vector2 tmp = tilea.transform.position;
-        tilea.transform.position = tileb.transform.position;
-        tileb.transform.position = tmp;
+        Vector2 tileAPosition = tileA.transform.position;
+        tileA.transform.position = tileB.transform.position;
+        tileB.transform.position = tileAPosition;
+        if (!isShownAnswer)
+        {
+            tileHistory.Add(tileAPosition);
+
+            Debug.Log(string.Join(",", tileHistory.Select(t => " x:" + t.x + " y: " + t.y + "\n")));
+        }
     }
 
     // シーン再読み込み
@@ -144,5 +163,17 @@ public class PuzzleGameDirector : MonoBehaviour
     {
         SceneManager.LoadScene("PuzzleGameScene");
     }
-}
+    int answerCount = 1;
+    public void OutputAnswer()
+    {
+        int lastIndex = tileHistory.Count();
+        Vector2 answer = tileHistory[lastIndex - answerCount];
+        answerCount++;
+        NextAnswerPosition.transform.position = answer;
+        NextAnswerPosition.SetActive(true);
+        Debug.Log(string.Join(",", tileHistory.Select(t => " x:" + t.x + " y: " + t.y + "\n")));
+        answerText.text = answerCount + "番目の座標" + answer;
+        isShownAnswer = true;
+    }
 
+}
