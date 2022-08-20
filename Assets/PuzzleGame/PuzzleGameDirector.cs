@@ -142,7 +142,7 @@ public class PuzzleGameDirector : MonoBehaviour
     // シーン再読み込み
     public void Retry()
     {
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("PuzzleGameScene");
     }
 }
 
